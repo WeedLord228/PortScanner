@@ -5,22 +5,23 @@ import java.net.*;
 
 public class TCPWorker {
     private static Socket socket;
-
-    public static boolean tcpCheck(String host, int port) throws IOException {
-        boolean result = false;
+// Возвращает 0 если порт октрыт, -1, если неправильное имя хоста или 1 если порт закрыт
+    public static int tcpCheck(String host, int port, int timeout) throws IOException {
+        int result = 1;
         try {
             InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getByName(host), port);
             socket = new Socket();
-            socket.connect(socketAddress, 100);
-            result = true;
+            socket.connect(socketAddress, timeout);
+            result = 0;
             socket.close();
         } catch (UnknownHostException e) {
             System.out.println("Неправильное имя хоста или адрес");
+            result = -1;
         } catch (SocketTimeoutException e) {
-            System.out.println("Не смог подключиться");
-            result = false;
+//            System.out.println("Не смог подключиться");
+            result = 1;
         } catch (IOException e) {
-            System.err.println("Не смог подключиться");
+            result = 1;
         }
         return result;
     }
